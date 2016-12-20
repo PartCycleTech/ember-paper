@@ -60,8 +60,8 @@ test('form `onSubmit` action is invoked', function(assert) {
 
 test('form `onValidityChange` action is invoked', function(assert) {
   // paper-input triggers `onValidityChange` on render
-  // so we expect three runs: one for each input on render and another on validity change
-  assert.expect(3);
+  // so we expect two runs: one on render and another on validity change
+  assert.expect(2);
 
   this.set('onValidityChange', () => {
     assert.ok(true);
@@ -168,4 +168,17 @@ test('form submit button calls form onSubmit action', function(assert) {
   `);
 
   this.$('button').click();
+});
+
+test('form submit button is of type submit', function(assert) {
+  this.set('onSubmit', () => {
+  });
+
+  this.render(hbs`
+    {{#paper-form onSubmit=(action onSubmit) as |form|}}
+      {{#form.submit-button}}Submit{{/form.submit-button}}
+    {{/paper-form}}
+  `);
+
+  assert.equal(this.$('button').attr('type'), 'submit');
 });
