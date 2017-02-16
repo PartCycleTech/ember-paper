@@ -2,10 +2,11 @@
  * @module ember-paper
  */
 import Ember from 'ember';
-
+import layout from '../templates/components/paper-slider';
 import FocusableMixin from 'ember-paper/mixins/focusable-mixin';
 import ColorMixin from 'ember-paper/mixins/color-mixin';
-const { Component, computed, inject, String: { htmlSafe } } = Ember;
+const { Component, computed, inject, run, String: { htmlSafe } } = Ember;
+/* global Hammer */
 
 /**
  * @class PaperSlider
@@ -14,7 +15,7 @@ const { Component, computed, inject, String: { htmlSafe } } = Ember;
  * @uses ColorMixin
  */
 export default Component.extend(FocusableMixin, ColorMixin, {
-
+  layout,
   tagName: 'md-slider',
 
   attributeBindings: ['min', 'max', 'step', 'discrete:md-discrete', 'tabindex'],
@@ -29,9 +30,23 @@ export default Component.extend(FocusableMixin, ColorMixin, {
   step: 1,
   tabindex: 0,
 
-  trackContainer: computed(function() {
-    return this.$('.md-track-container');
-  }),
+  didInsertElement() {
+    this._super(...arguments);
+
+    this._setupSlider();
+  },
+
+  _setupSlider() {
+    let thumbContainer = this.$('.md-thumb-container').get(0);
+    let sliderHammer = new Hammer(thumbContainer);
+    this._thumbContainerHammer = sliderHammer;
+
+    // Enable dragging the slider
+    sliderHammer.get('pan').set({ threshold: 1 });
+    sliderHammer.on('panstart', run.bind(this, this._dragStart))
+      .on('panmove', run.bind(this, this._drag))
+      .on('panend', run.bind(this, this._dragEnd));
+  },
 
   activeTrackStyle: computed('percent', function() {
     let percent = this.get('percent') || 0;
@@ -55,7 +70,8 @@ export default Component.extend(FocusableMixin, ColorMixin, {
   }),
 
   positionToPercent(x) {
-    return Math.max(0, Math.min(1, (x - this.get('sliderDimensions.left')) / this.get('sliderDimensions.width')));
+    let { left, width } = this.sliderDimensions();
+    return Math.max(0, Math.min(1, (x - left) / width));
   },
 
   percentToValue(x) {
@@ -77,20 +93,28 @@ export default Component.extend(FocusableMixin, ColorMixin, {
 
   active: false,
   dragging: false,
+  enabled: computed.not('disabled'),
 
-  sliderDimensions: computed(function() {
-    return this.get('trackContainer')[0].getBoundingClientRect();
-  }),
-
-  setValueFromEvent(event) {
-    // let exactVal = this.percentToValue(this.positionToPercent(event.deltaX || event.clientX));
-    let exactVal = this.percentToValue(this.positionToPercent(event.clientX || event.originalEvent.touches[0].clientX));
-    let closestVal = this.minMaxValidator(this.stepValidator(exactVal));
-
-    this.set('value', closestVal);
+  sliderDimensions() {
+    return this.$('.md-track-container').get(0).getBoundingClientRect();
   },
 
-  down(event) {
+  click(event) {
+    if (this.get('disabled')) {
+      return;
+    }
+
+    this.setValueFromEvent(event);
+  },
+
+  setValueFromEvent(event) {
+    let exactVal = this.percentToValue(this.positionToPercent(event.clientX || event.srcEvent.clientX));
+    let closestVal = this.minMaxValidator(this.stepValidator(exactVal));
+
+    this.sendAction('onChange', closestVal);
+  },
+
+  _dragStart(event) {
     if (this.get('disabled')) {
       return;
     }
@@ -99,17 +123,13 @@ export default Component.extend(FocusableMixin, ColorMixin, {
     this.set('dragging', true);
     this.$().focus();
 
-    this.get('sliderDimensions');
-
     this.setValueFromEvent(event);
   },
 
-  up(event) {
+  _dragEnd() {
     if (this.get('disabled')) {
       return;
     }
-
-    event.stopPropagation();
 
     this.beginPropertyChanges();
     this.set('active', false);
@@ -117,13 +137,12 @@ export default Component.extend(FocusableMixin, ColorMixin, {
     this.endPropertyChanges();
   },
 
-  move(event) {
+  _drag(event) {
     if (this.get('disabled') || !this.get('dragging')) {
       return;
     }
 
     this.setValueFromEvent(event);
-
   },
 
   keyDown(event) {
@@ -146,7 +165,7 @@ export default Component.extend(FocusableMixin, ColorMixin, {
 
       newValue = this.get('value') + changeAmount;
 
-      this.set('value', this.minMaxValidator(newValue));
+      this.sendAction('onChange', this.minMaxValidator(newValue));
 
       event.preventDefault();
       event.stopPropagation();
