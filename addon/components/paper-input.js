@@ -152,12 +152,6 @@ export default Component.extend(FocusableMixin, ColorMixin, ChildMixin, Validati
       this.sendAction('onBlur', e);
       this.set('isTouched', true);
       this.notifyValidityChange();
-    },
-
-    handleKeyPress(e) {
-      if (e.keyCode === 13) {
-        this.sendAction('onInputSubmit');
-      }
     }
   }
 });
