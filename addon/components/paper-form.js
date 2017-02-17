@@ -15,7 +15,6 @@ const { Component, computed } = Ember;
 export default Component.extend(ParentMixin, {
   layout,
   tagName: '',
-  enterToSubmit: false,
   isValid: computed.not('isInvalid'),
   isInvalid: computed('childComponents.@each.isInvalid', function() {
     return this.get('childComponents').isAny('isInvalid');
@@ -25,11 +24,6 @@ export default Component.extend(ParentMixin, {
       if (this.get('lastIsValid') !== this.get('isValid')) {
         this.sendAction('onValidityChange', this.get('isValid'));
         this.set('lastIsValid', this.get('isValid'));
-      }
-    },
-    onInputSubmit() {
-      if (this.get('enterToSubmit')) {
-        this.send('onSubmit');
       }
     },
     onSubmit() {
