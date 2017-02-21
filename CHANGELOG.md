@@ -16,6 +16,13 @@ Contributions and pull requests are always welcome. Contributors may often be fo
 - Flex and layout attributes are replaced by classes (see [the documentation](http://miguelcobain.github.io/ember-paper/release-1/#/layout/introduction)). `flex=true` on Ember Paper components has also been removed and replaced by classes.
 
 ### master
+- [9f3da49](https://github.com/miguelcobain/ember-paper/commit/9f3da4974b02c2d5f8bffa36fbf6141a7fceb9f1) Fixes bug in slider dragging.
+- [7ec7a7b](https://github.com/miguelcobain/ember-paper/commit/7ec7a7beb4e8f3df2de3c8e7618e6a39b318b73d) Removes accidental text selection while dragging slider on Safari.
+- [94c8ad9](https://github.com/miguelcobain/ember-paper/commit/94c8ad9eb16a6c6501592b6bfae62d4d1158fc0f) Validation params can now change and the correct validation messages will appear (e.g change required from `true` to `false` after render).
+- [3cec77c](https://github.com/miguelcobain/ember-paper/commit/3cec77ce136f9c9f7142e0d8795afb26571af9b5) Allow sidenav's `lockedOpen` to be toggled.
+- [#649](https://github.com/miguelcobain/ember-paper/pull/649) `paper-form` now renders a `<form>` html tag. This is for the greater good. If you want to keep it tagless, please use `{{#paper-form tagName=""}}`.
+
+### 1.0.0-alpha.16 (February 14, 2017) <--- forever alone
 - [#636](https://github.com/miguelcobain/ember-paper/pull/636) Consuming apps can now specify `ENV['ember-paper'].insertFontLinks` to prevent the insertion of google fonts links in the head tag. This is especially useful if you want to include your own fonts.
 - [4d363ff](https://github.com/miguelcobain/ember-paper/commit/4d363ff0cf810ecd38c8c5a9d9d12d5f6f7f912f) `paper-slider` is now a DDAU component. It will trigger an `onChange` action with the new value. It is up to you to update the value yourself (like `paper-input`, `paper-checkbox`, `paper-switch`, etc).
 
