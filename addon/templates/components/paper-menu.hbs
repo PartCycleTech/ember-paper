@@ -1,4 +1,5 @@
 {{yield (hash
+  dropdown=(readonly publicAPI)
   isOpen=publicAPI.isOpen
   disabled=publicAPI.disabled
   actions=publicAPI.actions
@@ -9,9 +10,11 @@
     onFocus=(action "handleFocus")
     renderInPlace=(readonly renderInPlace)
     vPosition=(readonly vPosition)
+    tabindex=-1
   )
   content=(component "paper-menu-content"
     dropdown=(readonly publicAPI)
+    destination=(readonly destination)
     hPosition=(readonly hPosition)
     renderInPlace=(readonly renderInPlace)
     vPosition=(readonly vPosition)
