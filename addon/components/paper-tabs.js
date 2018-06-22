@@ -14,8 +14,6 @@ export default Component.extend(ParentMixin, ColorMixin, {
   classNames: ['md-no-tab-content', 'md-default-theme'],
   attributeBindings: ['borderBottom:md-border-bottom'],
 
-  constants: service(),
-
   selected: 0, // select first tab by default
 
   _selectedTab: computed('childComponents.@each.isSelected', function() {
@@ -140,7 +138,7 @@ export default Component.extend(ParentMixin, ColorMixin, {
     if (typeof stretch === 'boolean') {
       currentStretch = stretch;
     } else {
-      let mediaQuery = this.get('constants').MEDIA[stretch] || stretch;
+      let mediaQuery = stretch;
       currentStretch = window.matchMedia(mediaQuery).matches;
     }
 
