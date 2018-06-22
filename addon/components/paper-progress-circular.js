@@ -189,17 +189,16 @@ export default Component.extend(ColorMixin, {
         let currentTime = clamp(now() - startTime, 0, animationDuration);
         renderFrame(ease(currentTime, animateFrom, changeInValue, animationDuration), diameter, strokeWidth, dashLimit);
 
-          // Do not allow overlapping animations
-          if (id === this.lastAnimationId && currentTime < animationDuration) {
-            this.lastDrawFrame = rAF(animation);
-          }
+        // Do not allow overlapping animations
+        if (id === this.lastAnimationId && currentTime < animationDuration) {
+          this.lastDrawFrame = rAF(animation);
+        }
 
-          if (currentTime >= animationDuration && this.get('mode') === MODE_INDETERMINATE) {
-            this.startIndeterminateAnimation();
-          }
-        };
-        this.lastDrawFrame = rAF(animation);
-      }
+        if (currentTime >= animationDuration && this.get('mode') === MODE_INDETERMINATE) {
+          this.startIndeterminateAnimation();
+        }
+      };
+      this.lastDrawFrame = rAF(animation);
     }
   },
 
